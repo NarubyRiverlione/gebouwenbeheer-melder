@@ -5,11 +5,12 @@
   "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --fix && pnpm tsc -b --noEmit",
+    "lint": "eslint . --fix && tsc -b --noEmit",
     "dev": "ts-node src/main.ts",
-    "watch": "tsc -w -noEmit",
+    "watch": "tsc -w --noEmit",
     "build": "tsc -b",
-    "start": "node dist/main.js"
+    "start": "node dist/main.js",
+    "init-context": "cat memory-bank/*.md"
   },
   "keywords": [],
   "author": "",
