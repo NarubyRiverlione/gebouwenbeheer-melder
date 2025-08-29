@@ -25,9 +25,17 @@
 6. Write unit/integration tests for core functionality.
 7. Update progress documentation as features are implemented.
 
+8. Implement JWT-based API authentication:
+   - Add `/auth/login` token-issuance endpoint.
+   - Add `authenticateJWT` middleware to protect report and clustering routes.
+   - Generate a test JWT fixture in `.env.test`.
+   - Configure Playwright E2E to read test JWT and inject `Authorization: Bearer <token>`.
+   - Write E2E smoke test: obtain JWT, bulk POST reports, assert persistence.
+
 ## Active Decisions
 - Use SQLite for lightweight, file-based storage.
 - Keep modules small (100–200 lines) and separate business logic from routing.
 - Enforce strict TypeScript (no `any`) and prefer `const` over `let`.
 - Manage dependencies with pnpm and run via `ts-node` in development.
 - All documentation, variable names, and comments must be in English; reported issue content will be in Dutch.
+- Use Playwright for end-to-end bulk-report creation tests within this project.
