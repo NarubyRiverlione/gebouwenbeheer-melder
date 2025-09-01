@@ -31,21 +31,44 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
+      - name: Cache node_modules with native bindings
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-native
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-node-${{ matrix.node-version }}-pnpm-
+
       - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential python3
 
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: |
+          if [ ! -f "node_modules/better-sqlite3/build/Release/better_sqlite3.node" ]; then
+            echo "Native bindings not found, installing and building..."
+            pnpm install --ignore-scripts
+          else
+            echo "Native bindings found, skipping build"
+            pnpm install --prefer-offline
+          fi
         env:
           npm_config_build_from_source: true
           PYTHON: python3
 
-      - name: Build better-sqlite3
+      - name: Build better-sqlite3 (if needed)
         run: |
-          cd node_modules/better-sqlite3
-          npm run build-release
+          if [ ! -f "node_modules/better-sqlite3/build/Release/better_sqlite3.node" ]; then
+            echo "Building better-sqlite3..."
+            cd node_modules/better-sqlite3
+            npm run build-release
+          else
+            echo "better-sqlite3 already built, skipping"
+          fi
         env:
           npm_config_build_from_source: true
           PYTHON: python3
