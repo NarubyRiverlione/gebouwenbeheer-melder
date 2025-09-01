@@ -31,19 +31,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Install build tools
+      - name: Clean install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3
-
-      - name: Install dependencies
-        run: pnpm install
+          rm -rf node_modules
+          pnpm install --no-frozen-lockfile
         env:
           npm_config_build_from_source: true
           PYTHON: python3
 
-      - name: Rebuild better-sqlite3
-        run: pnpm rebuild better-sqlite3
+      - name: Rebuild all native modules
+        run: pnpm rebuild
 
       - name: Run tests
         run: pnpm test -- --coverage
