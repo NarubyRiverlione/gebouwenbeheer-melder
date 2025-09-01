@@ -17,7 +17,14 @@ export interface Report {
   created_at: string
 }
 
-export type NewReport = Omit<
-  Report,
-  "id" | "timestamp" | "status" | "is_processed" | "is_resolved" | "created_at" | "cluster_id"
->
+export interface NewReport {
+  message: string
+  building?: string | null
+  floor?: string | null
+  apartment_Number?: string | null
+  reporter_name?: string | null
+  reporter_email?: string | null
+  reporter_phone?: string | null
+  category?: string | null
+  priority?: string | null
+}

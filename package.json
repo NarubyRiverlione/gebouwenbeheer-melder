@@ -5,10 +5,9 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "lint": "eslint . --fix && tsc -b --noEmit",
-    "dev": "tsx src/main.ts",
-    "watch": "tsc -w --noEmit",
+    "dev": "tsx src/main.ts --watch",
     "build": "tsc -b",
     "start": "node dist/src/main.js",
     "init-context": "cat memory-bank/*.md"
@@ -25,6 +24,7 @@
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
+    "@vitest/coverage-istanbul": "3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",

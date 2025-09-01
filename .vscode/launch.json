@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug TypeScript (tsx)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpx",
+      "runtimeArgs": ["tsx", "src/main.ts"],
+      "cwd": "${workspaceFolder}",
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Debug Compiled JavaScript",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/main.js",
+      "cwd": "${workspaceFolder}",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "sourceMaps": true,
+      "protocol": "inspector",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "preLaunchTask": "pnpm build"
+    }
+  ]
+}

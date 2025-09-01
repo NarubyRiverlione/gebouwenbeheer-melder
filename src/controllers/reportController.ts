@@ -18,6 +18,10 @@ export const countUnprocessedReports = (_req: Request, res: Response) => {
   res.json({ count })
 }
 
+export const getUnprocessedReports = (_req: Request, res: Response) => {
+  const reports = reportRepo.queryUnprocessed()
+  res.json(reports)
+}
 export const queryReports = (req: Request, res: Response) => {
   const { start, end, processed, resolved } = req.query
   const reports = reportRepo.queryByDate(

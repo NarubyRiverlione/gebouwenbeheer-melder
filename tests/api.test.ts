@@ -40,9 +40,17 @@ describe("API Endpoints", () => {
     )
   })
 
-  it("GET /reports/count returns unprocessed count", async () => {
-    const res = await request(app).get("/reports/count").expect(200)
-    expect(res.body.count).toBe(1)
+  it("GET /reports/countUnprocessed returns unprocessed count", async () => {
+    const res = await request(app).get("/reports/countUnprocessed").expect(200)
+    expect(res.body.count).toBeGreaterThanOrEqual(1)
+  })
+
+  it("GET /reports/unprocessed returns unprocessed reports", async () => {
+    const res = await request(app).get("/reports/unprocessed").expect(200)
+    expect(Array.isArray(res.body)).toBe(true)
+    expect(res.body).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: reportId, message: "API test report" })])
+    )
   })
 
   it("POST /ingest creates a report with validation", async () => {

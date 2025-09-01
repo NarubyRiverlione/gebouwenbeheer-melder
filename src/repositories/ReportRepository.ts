@@ -35,7 +35,19 @@ class ReportRepository {
          @reporter_name, @reporter_email, @reporter_phone,
          @category, @priority)`,
     )
-    const info = stmt.run(data)
+    // normalize undefined to null for optional fields
+    const payload = {
+      message: data.message,
+      building: data.building ?? null,
+      floor: data.floor ?? null,
+      apartment_Number: data.apartment_Number ?? null,
+      reporter_name: data.reporter_name ?? null,
+      reporter_email: data.reporter_email ?? null,
+      reporter_phone: data.reporter_phone ?? null,
+      category: data.category ?? null,
+      priority: data.priority ?? null,
+    }
+    const info = stmt.run(payload)
     return db.prepare("SELECT * FROM report WHERE id = ?").get(info.lastInsertRowid as number) as Report
   }
 
@@ -48,6 +60,9 @@ class ReportRepository {
       count: number
     }
     return row.count
+  }
+  queryUnprocessed(): Report[] {
+    return db.prepare("SELECT * FROM report WHERE is_processed = 0").all() as Report[]
   }
 
   queryByDate(start?: string, end?: string, processed?: boolean, resolved?: boolean): Report[] {

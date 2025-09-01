@@ -26,35 +26,15 @@ describe("ReportRepository", () => {
   })
 
   it("creates and retrieves a report", () => {
-    const data = {
-      message: "Test message",
-      building: null,
-      floor: null,
-      apartment_Number: null,
-      reporter_name: null,
-      reporter_email: null,
-      reporter_phone: null,
-      category: null,
-      priority: null,
-    }
+    const data = { message: "Test message" }
     const report = reportRepo.create(data)
     expect(report.id).toBeGreaterThan(0)
     const all = reportRepo.findAll()
     expect(all).toEqual(expect.arrayContaining([report]))
   })
 
-  it("counts and marks processed", () => {
-    const data = {
-      message: "Count test",
-      building: null,
-      floor: null,
-      apartment_Number: null,
-      reporter_name: null,
-      reporter_email: null,
-      reporter_phone: null,
-      category: null,
-      priority: null,
-    }
+  it("counts unprocessed", () => {
+    const data = { message: "Unprocessed count test" }
     const report = reportRepo.create(data)
     expect(reportRepo.countUnprocessed()).toBeGreaterThanOrEqual(1)
     reportRepo.markProcessed(report.id)
@@ -62,17 +42,7 @@ describe("ReportRepository", () => {
   })
 
   it("assigns and resolves cluster", () => {
-    const data = {
-      message: "Cluster test",
-      building: null,
-      floor: null,
-      apartment_Number: null,
-      reporter_name: null,
-      reporter_email: null,
-      reporter_phone: null,
-      category: null,
-      priority: null,
-    }
+    const data = { message: "Cluster test" }
     const report = reportRepo.create(data)
     reportRepo.assignCluster(report.id, 123)
     reportRepo.markResolvedByCluster(123)

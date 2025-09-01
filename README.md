@@ -48,6 +48,7 @@ pnpm dev
 
 - `pnpm lint` – run ESLint & TypeScript checks  
 - `pnpm test` – run Vitest unit & integration tests  
+- `pnpm test -- --coverage` – generate coverage report (text, lcov, html)  
 - `pnpm build` – compile TypeScript to `dist/`  
 - `pnpm start` – run compiled server  
 
@@ -62,7 +63,10 @@ pnpm dev
 - **GET /reports**  
   List all reports  
 
-- **GET /reports/count**  
+- **GET /reports/unprocessed**  
+  List unprocessed reports  
+
+- **GET /reports/countUnprocessed**  
   `{ count: number }` of unprocessed reports  
 
 - **GET /reports/query?start=&end=&processed=&resolved=**  
@@ -85,11 +89,19 @@ pnpm dev
 
 ## Testing
 
+All tests run against an in-memory SQLite database.
+
+Run tests:
 ```bash
 pnpm test
 ```
 
-All tests run against an in-memory SQLite database.
+Generate coverage report:
+```bash
+pnpm test -- --coverage
+```
+
+Coverage output includes text summary, lcov, and HTML report in `/coverage` directory.
 
 ## CI/CD
 
@@ -97,6 +109,13 @@ Workflows defined under `.github/workflows/` for:
 - Linting (ESLint & TypeScript)  
 - Testing (Vitest)  
 - Building (TypeScript compile)  
+
+## Debugging
+
+VSCode launch configurations are available in `.vscode/launch.json`.  
+- "Debug TypeScript (tsx)" runs the app via `tsx` with source maps.  
+- "Debug Compiled JavaScript" builds and launches the compiled `dist/main.js`.  
+Use F5 to start debugging and set breakpoints in your TypeScript code.
 
 ## Memory Bank
 

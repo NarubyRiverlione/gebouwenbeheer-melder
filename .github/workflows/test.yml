@@ -36,4 +36,9 @@ jobs:
 
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test -- --coverage
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
