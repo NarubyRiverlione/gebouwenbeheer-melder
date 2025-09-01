@@ -11,6 +11,7 @@
     "build": "tsc -b",
     "start": "node dist/src/main.js",
     "insertExample": "tsx scripts/insertExample.ts",
+    "test:api": "npx httpyac docs/requests.http",
     "init-context": "cat memory-bank/*.md"
   },
   "keywords": [],

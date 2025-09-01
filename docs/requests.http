@@ -1,0 +1,40 @@
+### List All Reports
+GET http://localhost:3000/reports
+Accept: application/json
+
+###
+
+### Create a Report
+POST http://localhost:3000/reports
+Content-Type: application/json
+
+{
+  "title": "Voorbeeld Probleem",
+  "description": "Beschrijving van het probleem in het Nederlands"
+}
+
+###
+
+### Ingest Email
+POST http://localhost:3000/ingest
+Content-Type: text/plain
+
+Subject: Voorbeeld Onderwerp
+Body: Voorbeeld e-maillichaam met probleemdetails
+
+###
+
+### Process Clusters
+POST http://localhost:3000/clusters/process
+
+###
+
+### List Unresolved Clusters
+GET http://localhost:3000/clusters
+Accept: application/json
+
+###
+
+### Resolve a Cluster
+POST http://localhost:3000/clusters/1/resolve
+Content-Type: application/json

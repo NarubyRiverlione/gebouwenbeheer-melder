@@ -30,6 +30,16 @@
 - `pnpm start` → `node dist/main.js`
 - `pnpm watch` → `tsc -w --noEmit`
 
+## API Request Files
+
+- Use VSCode REST Client `.http` files in `docs/requests.http` to define and organize example HTTP calls.
+- Install httpyac as a dev dependency:
+  - `npm install --save-dev httpyac`
+- Execute requests in terminal:
+  - `npx httpyac docs/requests.http`
+- Add npm script:
+  - `"test:api": "npx httpyac docs/requests.http"`
+
 ## Conventions & Constraints
 - No use of the `any` type; prefer `const` over `let`
 - Modular design: small files (<200 lines), separate layers (routes, controllers, services, repositories, models)

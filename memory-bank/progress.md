@@ -31,4 +31,5 @@
 Most core features and tests are complete; CI pipelines are in place. Documentation updates and final review remain.
 
 ## Known Issues
-No major issues. All tests pass; linting and type checks are green.
+- Test pipeline broken due to better-sqlite rebuild issue (low priority)
+- All tests pass locally; linting and type checks are green.
