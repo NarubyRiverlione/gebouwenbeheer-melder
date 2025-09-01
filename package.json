@@ -10,6 +10,7 @@
     "dev": "tsx src/main.ts --watch",
     "build": "tsc -b",
     "start": "node dist/src/main.js",
+    "insertExample": "tsx scripts/insertExample.ts",
     "init-context": "cat memory-bank/*.md"
   },
   "keywords": [],

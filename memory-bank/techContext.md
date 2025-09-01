@@ -35,3 +35,4 @@
 - Modular design: small files (<200 lines), separate layers (routes, controllers, services, repositories, models)
 - Consistent code style enforced by ESLint + Prettier
 - All documentation, variable names, and comments must be in English; reported issue content will be in Dutch.
+- don't end with ;

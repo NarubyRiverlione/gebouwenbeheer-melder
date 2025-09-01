@@ -51,6 +51,7 @@ pnpm dev
 - `pnpm test -- --coverage` – generate coverage report (text, lcov, html)  
 - `pnpm build` – compile TypeScript to `dist/`  
 - `pnpm start` – run compiled server  
+- `pnpm insertExample` – bulk insert example reports via the API  
 
 ## API Reference
 
