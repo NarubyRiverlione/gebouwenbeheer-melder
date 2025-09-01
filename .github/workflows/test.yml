@@ -31,22 +31,29 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Clean install dependencies
+      - name: Install build tools
         run: |
-          rm -rf node_modules
-          pnpm install --no-frozen-lockfile
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
         env:
           npm_config_build_from_source: true
           PYTHON: python3
 
-      - name: Rebuild all native modules
-        run: pnpm rebuild
-
-      - name: Debug better-sqlite3
+      - name: Build better-sqlite3
         run: |
-          node -e "console.log('Node version:', process.version, 'Platform:', process.platform, 'Arch:', process.arch)"
-          pnpm list better-sqlite3
+          cd node_modules/better-sqlite3
+          npm run build-release
+        env:
+          npm_config_build_from_source: true
+          PYTHON: python3
+
+      - name: Verify better-sqlite3 build
+        run: |
           ls -la node_modules/better-sqlite3/build/
+          node -e "const db = require('better-sqlite3')(':memory:'); console.log('better-sqlite3 working!');"
 
       - name: Run tests
         run: pnpm test -- --coverage
