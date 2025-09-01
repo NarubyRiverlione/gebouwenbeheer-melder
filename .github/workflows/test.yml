@@ -33,10 +33,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      - name: Install better-sqlite3 dependencies
-        run: pnpm add better-sqlite3 better-sqlite3-build
       - name: Rebuild better-sqlite3
-        run: pnpm exec better-sqlite3-build
+        run:  pnpm rebuild better-sqlite3
 
       - name: Run tests
         run: pnpm test -- --coverage
