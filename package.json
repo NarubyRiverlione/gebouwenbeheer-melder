@@ -1,24 +1,23 @@
 {
   "name": "gebouwenbeheer-melder",
   "version": "0.0.1",
-  "description": "",
-  "main": "dist/main.js",
-  "type": "module",
-  "scripts": {
-    "test": "vitest run ",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint . --fix && tsc -b --noEmit",
-    "dev": "tsx src/main.ts --watch",
-    "build": "tsc -b",
-    "start": "node dist/src/main.js",
-    "insertExample": "tsx scripts/insertExample.ts",
-    "test:api": "npx httpyac docs/requests.http",
-    "init-context": "cat memory-bank/*.md"
-  },
   "keywords": [],
+  "description": "",
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.15.0",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --fix && tsc -b --noEmit",
+    "dev": "tsx src/main.ts --watch",
+    "build": "pnpm audit && pnpm lint && tsc -b",
+    "start": "node dist/src/main.js",
+    "insertExample": "tsx scripts/insertExample.ts",
+    "test": "vitest run ",
+    "test:coverage": "vitest run --coverage",
+    "test:api": "npx httpyac docs/requests.http"
+  },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@types/better-sqlite3": "^7.6.13",
