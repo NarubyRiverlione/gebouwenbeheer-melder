@@ -56,6 +56,6 @@ export const ingestEmail = (req: Request, res: Response) => {
 }
 
 export const processReports = async (_req: Request, res: Response) => {
-  res.status(200).json({ message: "Processing initiated" })
-  await reportRepo.processAll()
+  const clusters = await reportRepo.processAll()
+  res.status(200).json(clusters)
 }

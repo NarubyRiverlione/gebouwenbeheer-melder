@@ -1,6 +1,7 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
 import clusterRepo from "./ClusterRepository.js"
+import type { IssueCluster } from "../models/IssueCluster.js"
 
 // Ensure table exists
 const createTable = `
@@ -101,19 +102,21 @@ class ReportRepository {
     db.prepare("UPDATE report SET cluster_id = ? WHERE id = ?").run(clusterId, reportId)
   }
 
-  async processAll() {
+  async processAll(): Promise<IssueCluster[]> {
     const unprocessedReports = this.queryUnprocessed()
     const reportsWithVector = await createVectors(unprocessedReports)
-
-    reportsWithVector.forEach((report) => {
+    const newClusters: IssueCluster[] = []
+    for (const report of reportsWithVector) {
+      if (report.is_processed) continue // skip already linked reports
       console.debug(`Processing report ${report.id}: ${report.message}`)
-      this.processOne(report, reportsWithVector)
+      const cluster = this.processOne(report, reportsWithVector)
+      newClusters.push(cluster)
       console.debug("-----------------------")
-    })
+    }
+    return newClusters
   }
 
-  processOne(report: Report, unprocessedReports: Report[]) {
-    if (report.is_processed) return // skip already linked reports
+  processOne(report: Report, unprocessedReports: Report[]): IssueCluster {
     const similarReports = [report] // as this report is not linked yet, start a new cluster
     this.markProcessed(report)
 
@@ -142,6 +145,7 @@ class ReportRepository {
       console.debug(`Linking report ${similarReport.id} to cluster ${newCluster.id}`)
       this.assignCluster(similarReport.id, newCluster.id)
     })
+    return newCluster
   }
 }
 

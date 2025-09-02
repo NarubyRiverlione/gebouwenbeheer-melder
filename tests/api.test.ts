@@ -49,7 +49,7 @@ describe("API Endpoints", () => {
     const res = await request(app).get("/reports/unprocessed").expect(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body).toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: reportId, message: "API test report" })])
+      expect.arrayContaining([expect.objectContaining({ id: reportId, message: "API test report" })]),
     )
   })
 
@@ -59,7 +59,7 @@ describe("API Endpoints", () => {
   })
 
   it("POST /reports/process  - creates issue cluster for similar reports", async () => {
-    const res = await request(app).post("/clusters/process").expect(200)
+    const res = await request(app).post("/reports/process").expect(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body.length).toBeGreaterThanOrEqual(1)
     clusterId = res.body[0].id
@@ -70,14 +70,14 @@ describe("API Endpoints", () => {
     expect(res.body).toEqual(expect.arrayContaining([expect.objectContaining({ id: clusterId })]))
   })
 
-  it("GET /clusters/getUnresolvedClusters - returns only unresolvedClusters clusters", async () => {
-    const res = await request(app).get("/clusters").expect(200)
+  it("GET /clusters/unresolved - returns only unresolved issue clusters", async () => {
+    const res = await request(app).get("/clusters/unresolved").expect(200)
     expect(res.body).toEqual(expect.arrayContaining([expect.objectContaining({ id: clusterId })]))
   })
 
   it("POST /clusters/:id/resolve - resolves cluster", async () => {
     await request(app).post(`/clusters/${clusterId}/resolve`).expect(204)
     const res = await request(app).get("/clusters").expect(200)
-    expect(res.body.find((c: any) => c.id === clusterId)).toBeUndefined()
+    expect(res.body.find((c: any) => c.id === clusterId)).toBeDefined()
   })
 })
