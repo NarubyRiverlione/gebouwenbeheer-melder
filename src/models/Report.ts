@@ -13,8 +13,9 @@ export interface Report {
   is_resolved: boolean
   category: string | null
   priority: string | null
-  cluster_id: number | null
+  cluster_id: number | null // link to IssueCluster
   created_at: string
+  vector: number | null
 }
 
 export interface NewReport {

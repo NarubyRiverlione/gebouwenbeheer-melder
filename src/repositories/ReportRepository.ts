@@ -1,5 +1,6 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
+import clusterRepo from "./ClusterRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -87,8 +88,9 @@ class ReportRepository {
     return db.prepare(sql).all(params) as Report[]
   }
 
-  markProcessed(id: number): void {
-    db.prepare("UPDATE report SET is_processed = 1 WHERE id = ?").run(id)
+  markProcessed(report: Report): void {
+    report.is_processed = true // mark in object as well
+    db.prepare("UPDATE report SET is_processed = 1 WHERE id = ?").run(report.id)
   }
 
   markResolvedByCluster(clusterId: number): void {
@@ -98,6 +100,79 @@ class ReportRepository {
   assignCluster(reportId: number, clusterId: number): void {
     db.prepare("UPDATE report SET cluster_id = ? WHERE id = ?").run(clusterId, reportId)
   }
+
+  async processAll() {
+    const unprocessedReports = this.queryUnprocessed()
+    const reportsWithVector = await createVectors(unprocessedReports)
+
+    reportsWithVector.forEach((report) => {
+      console.debug(`Processing report ${report.id}: ${report.message}`)
+      this.processOne(report, reportsWithVector)
+      console.debug("-----------------------")
+    })
+  }
+
+  processOne(report: Report, unprocessedReports: Report[]) {
+    if (report.is_processed) return // skip already linked reports
+    const similarReports = [report] // as this report is not linked yet, start a new cluster
+    this.markProcessed(report)
+
+    // compare with other unprocessed reports
+    for (const otherReport of unprocessedReports) {
+      if (otherReport.id === report.id) continue // don't compare with itself
+      if (otherReport.is_processed) {
+        console.debug(`Skipping already linked report ${otherReport.id}`)
+        continue
+      }
+
+      const similarity = compareReports(report.vector ?? 0, otherReport.vector ?? 0)
+
+      if (similarity > 70) {
+        console.debug(`Reports ${report.id} and ${otherReport.id} are similar (${similarity}%)`) // 70%
+        // threshold for similarity
+        similarReports.push(otherReport) // add as similar report
+        this.markProcessed(otherReport) // mark as processed
+      }
+    }
+
+    // create a issue cluster for similar reports
+    const newCluster = clusterRepo.create(report.message)
+    // link similar reports to the new cluster
+    similarReports.forEach((similarReport) => {
+      console.debug(`Linking report ${similarReport.id} to cluster ${newCluster.id}`)
+      this.assignCluster(similarReport.id, newCluster.id)
+    })
+  }
+}
+
+function compareReports(reportVector: number, otherVector: number) {
+  return 100 - Math.abs(reportVector - otherVector)
+}
+
+function createVectors(reports: Report[]): Promise<Report[]> {
+  return Promise.all(
+    reports.map(async (report) => {
+      if (!report.vector) {
+        report.vector = await generateVector(report)
+        // db.prepare("UPDATE report SET vector = ? WHERE id = ?").run(report.vector, report.id)
+      }
+      return report
+    }),
+  )
+}
+
+async function generateVector(report: Report): Promise<number> {
+  // Placeholder: Replace with actual vector generation logic
+
+  return new Promise((resolve) => {
+    // simulate async operation by waiting 50ms
+    setTimeout(() => {
+      console.debug(`Creating vector for report ${report.id}`)
+      // random number between 0 and 100
+      const vectorScore = Math.floor(Math.random() * 100)
+      return resolve(vectorScore)
+    }, 100)
+  })
 }
 
 export default new ReportRepository()
