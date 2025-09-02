@@ -2,6 +2,7 @@ import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
 import clusterRepo from "./ClusterRepository.js"
 import type { IssueCluster } from "../models/IssueCluster.js"
+import { cosineSimilarity, getEmbedding } from "./TransformRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -11,6 +12,7 @@ CREATE TABLE IF NOT EXISTS report (
   building TEXT,
   floor TEXT,
   apartment_Number TEXT,
+  debug_info TEXT,
   reporter_name TEXT,
   reporter_email TEXT,
   reporter_phone TEXT,
@@ -31,11 +33,11 @@ class ReportRepository {
       `INSERT INTO report
         (message, building, floor, apartment_Number,
          reporter_name, reporter_email, reporter_phone,
-         category, priority)
+         category, priority,debug_info)
        VALUES
         (@message, @building, @floor, @apartment_Number,
          @reporter_name, @reporter_email, @reporter_phone,
-         @category, @priority)`,
+         @category, @priority,@debug_info)`,
     )
     // normalize undefined to null for optional fields
     const payload = {
@@ -48,6 +50,7 @@ class ReportRepository {
       reporter_phone: data.reporter_phone ?? null,
       category: data.category ?? null,
       priority: data.priority ?? null,
+      debug_info: data.debug_info ?? null,
     }
     const info = stmt.run(payload)
     return db.prepare("SELECT * FROM report WHERE id = ?").get(info.lastInsertRowid as number) as Report
@@ -108,10 +111,10 @@ class ReportRepository {
     const newClusters: IssueCluster[] = []
     for (const report of reportsWithVector) {
       if (report.is_processed) continue // skip already linked reports
-      console.debug(`Processing report ${report.id}: ${report.message}`)
+      console.log(`Processing report ${report.debug_info}: ${report.message}`)
       const cluster = this.processOne(report, reportsWithVector)
       newClusters.push(cluster)
-      console.debug("-----------------------")
+      console.log("-----------------------")
     }
     return newClusters
   }
@@ -124,14 +127,21 @@ class ReportRepository {
     for (const otherReport of unprocessedReports) {
       if (otherReport.id === report.id) continue // don't compare with itself
       if (otherReport.is_processed) {
-        console.debug(`Skipping already linked report ${otherReport.id}`)
+        //  console.log(`- report ${otherReport.id} skipping, is  already linked`)
         continue
       }
+      if (!otherReport.embeddings || !report.embeddings) {
+        console.log(`- report ${otherReport.id} skipped due to missing embeddings`)
+        continue
+      }
+      const similarity = compareReports(report.embeddings, otherReport.embeddings)
+      console.log(`- report ${otherReport.debug_info} similarity: ${similarity.toFixed(0)}%`)
 
-      const similarity = compareReports(report.vector ?? 0, otherReport.vector ?? 0)
-
-      if (similarity > 70) {
-        console.debug(`Reports ${report.id} and ${otherReport.id} are similar (${similarity}%)`) // 70%
+      const threshold = Number(process.env["REPORT_SIMILARITY_THRESHOLD"] || "60") // default to 60% if not set
+      if (similarity > threshold) {
+        console.log(
+          `Reports ${report.debug_info} and ${otherReport.debug_info} are similar (${similarity}%)`,
+        ) // 70%
         // threshold for similarity
         similarReports.push(otherReport) // add as similar report
         this.markProcessed(otherReport) // mark as processed
@@ -149,34 +159,35 @@ class ReportRepository {
   }
 }
 
-function compareReports(reportVector: number, otherVector: number) {
-  return 100 - Math.abs(reportVector - otherVector)
+function compareReports(reportVector: number[], otherVector: number[]) {
+  // return 100 - Math.abs(reportVector - otherVector)
+  return cosineSimilarity(reportVector, otherVector) * 100
 }
 
 function createVectors(reports: Report[]): Promise<Report[]> {
   return Promise.all(
     reports.map(async (report) => {
-      if (!report.vector) {
-        report.vector = await generateVector(report)
-        // db.prepare("UPDATE report SET vector = ? WHERE id = ?").run(report.vector, report.id)
+      if (!report.embeddings) {
+        report.embeddings = await generateVector(report)
       }
       return report
     }),
   )
 }
 
-async function generateVector(report: Report): Promise<number> {
+async function generateVector(report: Report): Promise<number[]> {
   // Placeholder: Replace with actual vector generation logic
+  return getEmbedding(report.message)
 
-  return new Promise((resolve) => {
-    // simulate async operation by waiting 50ms
-    setTimeout(() => {
-      console.debug(`Creating vector for report ${report.id}`)
-      // random number between 0 and 100
-      const vectorScore = Math.floor(Math.random() * 100)
-      return resolve(vectorScore)
-    }, 100)
-  })
+  // return new Promise((resolve) => {
+  //   // simulate async operation by waiting 50ms
+  //   setTimeout(() => {
+  //     console.debug(`Creating vector for report ${report.id}`)
+  //     // random number between 0 and 100
+  //     const vectorScore = Math.floor(Math.random() * 100)
+  //     return resolve(vectorScore)
+  //   }, 100)
+  // })
 }
 
 export default new ReportRepository()
