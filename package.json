@@ -5,7 +5,8 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "test": "vitest run --coverage",
+    "test": "vitest run ",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --fix && tsc -b --noEmit",
     "dev": "tsx src/main.ts --watch",
     "build": "tsc -b",

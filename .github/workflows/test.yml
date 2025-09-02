@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [ 20.x]
 
     steps:
       - name: Check out code
@@ -79,7 +79,7 @@ jobs:
           node -e "const db = require('better-sqlite3')(':memory:'); console.log('better-sqlite3 working!');"
 
       - name: Run tests
-        run: pnpm test -- --coverage
+        run: pnpm test:coverage
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

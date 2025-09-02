@@ -5,7 +5,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const dbFile = process.env["DB_FILE"] || "database.sqlite"
-const dbPath = path.resolve(process.cwd(), dbFile)
+const dbPath = dbFile === ":memory:" ? dbFile : path.resolve(process.cwd(), dbFile)
 const db = new Database(dbPath)
 
 export default db

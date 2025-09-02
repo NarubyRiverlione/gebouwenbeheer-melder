@@ -19,7 +19,6 @@ describe("ReportRepository", () => {
   afterEach(() => {
     // Clean up tables after each test to ensure isolation
     db.prepare("DELETE FROM report").run()
-    db.prepare("DELETE FROM issue_cluster").run()
     db.close()
     // Reset module cache for next test
     vi.resetModules()

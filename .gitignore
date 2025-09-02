@@ -1,5 +1,4 @@
 dist
 *.sqlite
-:memory:
 coverage
-:memory:
+
