@@ -54,3 +54,8 @@ export const ingestEmail = (req: Request, res: Response) => {
   const report = reportRepo.create(newReportData)
   res.status(201).json(report)
 }
+
+export const processReports = async (_req: Request, res: Response) => {
+  const clusters = await reportRepo.processAll()
+  res.status(200).json(clusters)
+}

@@ -77,13 +77,17 @@ pnpm dev
   Ingest raw email content into a report  
   Body: Partial report JSON; requires `message` field  
 
-### Clusters
-
-- **POST /clusters/process**  
+- **POST /reports/process**  
   Process and cluster all unprocessed reports  
 
+### Clusters
+
+
 - **GET /clusters**  
-  List all unresolved clusters  
+  List all clusters  
+
+- **GET /clusters/unresolved**  
+  List only unresolved clusters  
 
 - **POST /clusters/:id/resolve**  
   Mark a cluster (and its reports) as resolved  

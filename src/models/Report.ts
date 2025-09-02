@@ -13,8 +13,10 @@ export interface Report {
   is_resolved: boolean
   category: string | null
   priority: string | null
-  cluster_id: number | null
+  cluster_id: number | null // link to IssueCluster
   created_at: string
+  embeddings: number[] | null
+  debug_info: string | null
 }
 
 export interface NewReport {
@@ -27,4 +29,5 @@ export interface NewReport {
   reporter_phone?: string | null
   category?: string | null
   priority?: string | null
+  debug_info?: string | null
 }

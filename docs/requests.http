@@ -4,6 +4,18 @@ Accept: application/json
 
 ###
 
+### List Unprocessed Reports
+GET http://localhost:3000/reports/unprocessed
+Accept: application/json
+
+###
+
+### Get amount of unprocessed Reports
+GET http://localhost:3000/reports/countUnprocessed
+Accept: application/json
+
+###
+
 ### Create a Report
 POST http://localhost:3000/reports
 Content-Type: application/json
@@ -24,17 +36,23 @@ Body: Voorbeeld e-maillichaam met probleemdetails
 
 ###
 
-### Process Clusters
-POST http://localhost:3000/clusters/process
+### Process Reports
+POST http://localhost:3000/reports/process
 
 ###
 
-### List Unresolved Clusters
+### List all Issue Clusters
 GET http://localhost:3000/clusters
 Accept: application/json
 
 ###
 
-### Resolve a Cluster
+### List unresolved Issue Clusters
+GET http://localhost:3000/clusters/unresolved
+Accept: application/json
+
+###
+
+### Resolve a Cluster with id 1
 POST http://localhost:3000/clusters/1/resolve
 Content-Type: application/json

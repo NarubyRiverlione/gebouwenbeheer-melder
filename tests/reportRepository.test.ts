@@ -36,7 +36,7 @@ describe("ReportRepository", () => {
     const data = { message: "Unprocessed count test" }
     const report = reportRepo.create(data)
     expect(reportRepo.countUnprocessed()).toBeGreaterThanOrEqual(1)
-    reportRepo.markProcessed(report.id)
+    reportRepo.markProcessed(report)
     expect(reportRepo.countUnprocessed()).toBe(0)
   })
 

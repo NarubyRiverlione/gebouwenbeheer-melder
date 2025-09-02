@@ -6,6 +6,7 @@ export interface IssueCluster {
   estimated_impact: string | null
   created_date: string
   status: string
+  linked_reports?: number[]
 }
 
 export type NewIssueCluster = Omit<IssueCluster, "id" | "created_date" | "status">

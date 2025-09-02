@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@huggingface/inference':
+        specifier: ^4.7.1
+        version: 4.7.1
       better-sqlite3:
         specifier: ^12.2.0
         version: 12.2.0
@@ -342,6 +345,17 @@ packages:
   '@eslint/plugin-kit@0.3.5':
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@huggingface/inference@4.7.1':
+    resolution: {integrity: sha512-gXrMocGDsE6kUZPEj82c3O+/OKnIfbHvg9rYjGA6svbWrYVmHCIAdCrrgCwNl2v5GELfPJrrfIv0bvzCTfa64A==}
+    engines: {node: '>=18'}
+
+  '@huggingface/jinja@0.5.1':
+    resolution: {integrity: sha512-yUZLld4lrM9iFxHCwFQ7D1HW2MWMwSbeB7WzWqFYDWK+rEb+WldkLdAJxUPOmgICMHZLzZGVcVjFh3w/YGubng==}
+    engines: {node: '>=18'}
+
+  '@huggingface/tasks@0.19.42':
+    resolution: {integrity: sha512-+FTsNxQA6U8s+cVRzBONXqaQkqB7BrNCONGVk6HdYHMIugEEBo8m9WYZrtr8z0zQPJqqqi+yv2svupE15FCing==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2134,6 +2148,15 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
+
+  '@huggingface/inference@4.7.1':
+    dependencies:
+      '@huggingface/jinja': 0.5.1
+      '@huggingface/tasks': 0.19.42
+
+  '@huggingface/jinja@0.5.1': {}
+
+  '@huggingface/tasks@0.19.42': {}
 
   '@humanfs/core@0.19.1': {}
 

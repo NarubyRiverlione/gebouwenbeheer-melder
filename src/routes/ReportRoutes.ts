@@ -5,7 +5,8 @@ import {
   countUnprocessedReports,
   getUnprocessedReports,
   queryReports,
-} from "../controllers/reportController.js"
+  processReports,
+} from "../controllers/ReportController.js"
 
 const router = Router()
 
@@ -14,5 +15,7 @@ router.get("/", listReports)
 router.get("/countUnprocessed", countUnprocessedReports)
 router.get("/unprocessed", getUnprocessedReports)
 router.get("/query", queryReports)
+
+router.post("/process", processReports)
 
 export default router

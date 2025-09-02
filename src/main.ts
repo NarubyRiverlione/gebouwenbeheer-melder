@@ -1,8 +1,8 @@
 import express, { type Request, type Response, type NextFunction } from "express"
 import dotenv from "dotenv"
-import reportRouter from "./routes/report.js"
-import clusterRouter from "./routes/cluster.js"
-import { ingestEmail } from "./controllers/reportController.js"
+import reportRouter from "./routes/ReportRoutes.js"
+import clusterRouter from "./routes/ClusterRoutes.js"
+import { ingestEmail } from "./controllers/ReportController.js"
 
 dotenv.config()
 
