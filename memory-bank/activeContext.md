@@ -9,17 +9,13 @@
 - Established primary data schemas for reports and issue clusters in `data-format.md`.
 - Initialized placeholder entry point in `src/main.ts`.
 - Configure linting and type-checking workflows (`pnpm lint`, `tsc -b`).
+- Implemented Express routing for:
+  - Email ingestion (`POST /ingest`)
+  - Reports (`POST /reports`, `GET /reports`, `GET /reports/countUnprocessed`, `GET /reports/unprocessed`, `GET /reports/query`, `POST /reports/process`)
+  - Clusters (`GET /clusters`, `GET /clusters/unresolved`, `POST /clusters/:id/resolve`)
 
-## Current Focus 
-1. Implement Express server scaffolding:
-   - Configure routing modules for report and cluster APIs.
-   - Set up SQLite database connectivity.
-2. Define TypeScript data models and repository layer for `report` and `issue_cluster`.
-3. Develop API endpoints for:
-   - Creating and querying reports.
-   - Triggering clustering process.
-   - Ingesting email content to extract structured report data, returning validation errors for missing mandatory fields.
-   - Retrieving and resolving issue clusters.
+## Current Focus
+- Memory bank documentation update in progress; no code changes currently underway.
 
 ## Next Steps
 4. Encapsulate business logic in separate service modules.

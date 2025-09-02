@@ -1,4 +1,5 @@
 import db from "../utils/db.js"
+import "./ReportRepository.js"
 import type { IssueCluster, NewIssueCluster } from "../models/IssueCluster.js"
 
 // Ensure table exists

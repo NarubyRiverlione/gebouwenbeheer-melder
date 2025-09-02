@@ -2,12 +2,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
 import dbModule from "../src/utils/db.js"
 import clusterRepoModule from "../src/repositories/ClusterRepository.js"
-import reportRepoModule from "../src/repositories/ReportRepository.js"
 
 describe("ClusterRepository", () => {
   let db: typeof dbModule
   let clusterRepo: typeof clusterRepoModule
-  let reportRepo: typeof reportRepoModule
 
   beforeEach(async () => {
     process.env["DB_FILE"] = ":memory:"
@@ -16,8 +14,6 @@ describe("ClusterRepository", () => {
     db = dbImport.default
     const clusterImport = await import("../src/repositories/ClusterRepository.js")
     clusterRepo = clusterImport.default
-    const reportImport = await import("../src/repositories/ReportRepository.js")
-    reportRepo = reportImport.default
   })
 
   afterEach(() => {
