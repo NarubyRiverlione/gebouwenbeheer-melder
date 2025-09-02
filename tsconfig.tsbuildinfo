@@ -1,1 +1,1 @@
-{"root":["./src/main.ts"],"version":"5.9.2"}
+{"root":["./src/main.ts","./src/controllers/clustercontroller.ts","./src/controllers/reportcontroller.ts","./src/models/issuecluster.ts","./src/models/report.ts","./src/repositories/clusterrepository.ts","./src/repositories/reportrepository.ts","./src/routes/cluster.ts","./src/routes/report.ts","./src/utils/db.ts"],"version":"5.9.2"}

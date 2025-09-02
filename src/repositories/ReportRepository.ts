@@ -1,0 +1,103 @@
+import db from "../utils/db.js"
+import type { Report, NewReport } from "../models/Report.js"
+
+// Ensure table exists
+const createTable = `
+CREATE TABLE IF NOT EXISTS report (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message TEXT NOT NULL,
+  building TEXT,
+  floor TEXT,
+  apartment_Number TEXT,
+  reporter_name TEXT,
+  reporter_email TEXT,
+  reporter_phone TEXT,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  status TEXT DEFAULT 'pending',
+  is_processed BOOLEAN DEFAULT false,
+  is_resolved BOOLEAN DEFAULT false,
+  category TEXT,
+  priority TEXT,
+  cluster_id INTEGER,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)`
+db.prepare(createTable).run()
+
+class ReportRepository {
+  create(data: NewReport): Report {
+    const stmt = db.prepare(
+      `INSERT INTO report
+        (message, building, floor, apartment_Number,
+         reporter_name, reporter_email, reporter_phone,
+         category, priority)
+       VALUES
+        (@message, @building, @floor, @apartment_Number,
+         @reporter_name, @reporter_email, @reporter_phone,
+         @category, @priority)`,
+    )
+    // normalize undefined to null for optional fields
+    const payload = {
+      message: data.message,
+      building: data.building ?? null,
+      floor: data.floor ?? null,
+      apartment_Number: data.apartment_Number ?? null,
+      reporter_name: data.reporter_name ?? null,
+      reporter_email: data.reporter_email ?? null,
+      reporter_phone: data.reporter_phone ?? null,
+      category: data.category ?? null,
+      priority: data.priority ?? null,
+    }
+    const info = stmt.run(payload)
+    return db.prepare("SELECT * FROM report WHERE id = ?").get(info.lastInsertRowid as number) as Report
+  }
+
+  findAll(): Report[] {
+    return db.prepare("SELECT * FROM report").all() as Report[]
+  }
+
+  countUnprocessed(): number {
+    const row = db.prepare("SELECT COUNT(*) as count FROM report WHERE is_processed = 0").get() as {
+      count: number
+    }
+    return row.count
+  }
+  queryUnprocessed(): Report[] {
+    return db.prepare("SELECT * FROM report WHERE is_processed = 0").all() as Report[]
+  }
+
+  queryByDate(start?: string, end?: string, processed?: boolean, resolved?: boolean): Report[] {
+    let sql = "SELECT * FROM report WHERE 1=1"
+    const params: Record<string, unknown> = {}
+    if (start) {
+      sql += " AND timestamp >= @start"
+      params["start"] = start
+    }
+    if (end) {
+      sql += " AND timestamp <= @end"
+      params["end"] = end
+    }
+    if (processed !== undefined) {
+      sql += " AND is_processed = @processed"
+      params["processed"] = processed ? 1 : 0
+    }
+    if (resolved !== undefined) {
+      sql += " AND is_resolved = @resolved"
+      params["resolved"] = resolved ? 1 : 0
+    }
+    return db.prepare(sql).all(params) as Report[]
+  }
+
+  markProcessed(id: number): void {
+    db.prepare("UPDATE report SET is_processed = 1 WHERE id = ?").run(id)
+  }
+
+  markResolvedByCluster(clusterId: number): void {
+    db.prepare("UPDATE report SET is_resolved = 1 WHERE cluster_id = ?").run(clusterId)
+  }
+
+  assignCluster(reportId: number, clusterId: number): void {
+    db.prepare("UPDATE report SET cluster_id = ? WHERE id = ?").run(clusterId, reportId)
+  }
+}
+
+export default new ReportRepository()
