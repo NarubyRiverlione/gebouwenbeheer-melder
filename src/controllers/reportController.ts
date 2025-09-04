@@ -2,12 +2,27 @@ import type { Request, Response } from "express"
 import reportRepo from "../repositories/ReportRepository.js"
 import type { NewReport } from "../models/Report.js"
 import ClusterRepository from "../repositories/ClusterRepository.js"
+import ReportRepository from "../repositories/ReportRepository.js"
 
 // create a new report, set processNow to true to process it immediately
 export const createReport = async (req: Request, res: Response) => {
   const data = req.body["report"] as NewReport
   const processNow = req.body["processNow"] ?? false
-  const reportResult = await reportRepo.create(data, processNow)
+  // save the report
+  const reportResult = reportRepo.create(data)
+  // if no category, categorize it
+  if (!reportResult.category) {
+    const category = await reportRepo.categorize(reportResult)
+    console.log(`- Report ${reportResult.debugId} categorized as ${category}`)
+    if (data.debug_category && data.debug_category !== category) {
+      console.warn(`-- Overriding category ${category} with user provided category ${data.category}`)
+    }
+    ReportRepository.updateCategory(reportResult.id, category)
+  }
+  // if requested, process the report immediately
+  if (processNow) {
+    await reportRepo.processOne(reportResult)
+  }
   res.status(201).json(reportResult)
 }
 

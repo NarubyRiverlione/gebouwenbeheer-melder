@@ -1,7 +1,7 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
 import ClusterRepository from "./ClusterRepository.js"
-import compareReportWithClusters from "./CompareRepository.js"
+import { compareReportWithClusters, categorizeWithOllama } from "./OllamaRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS report (
 db.prepare(createTable).run()
 
 class ReportRepository {
-  async create(data: NewReport, processNow: boolean): Promise<{ report: Report; isProcessed: boolean }> {
+  create(data: NewReport): Report {
     const stmt = db.prepare(
       `INSERT INTO report
         (message, building, floor, apartment_Number,
@@ -55,13 +55,7 @@ class ReportRepository {
     const report = db
       .prepare("SELECT * FROM report WHERE id = ?")
       .get(info.lastInsertRowid as number) as Report
-
-    // if processNow is true, process this report immediately
-    if (processNow) {
-      await this.processOne(report)
-      return { report, isProcessed: true }
-    }
-    return { report, isProcessed: false }
+    return report
   }
 
   findAll(): Report[] {
@@ -112,12 +106,15 @@ class ReportRepository {
   assignCluster(reportId: number, clusterId: number): void {
     db.prepare("UPDATE report SET cluster_id = ? WHERE id = ?").run(clusterId, reportId)
   }
+  updateCategory(reportId: number, category: string): void {
+    db.prepare("UPDATE report SET category = ? WHERE id = ?").run(category, reportId)
+  }
 
   processOne = async (report: Report) => {
     try {
       console.log("Processing report", report.debugId)
       // always get the latest unresolved clusters, in case new ones were created during this loop
-      const unresolvedClusters = ClusterRepository.findUnresolved()
+      const unresolvedClusters = ClusterRepository.findUnresolvedByCategory(report.category ?? "Onbekend")
       const isNewCluster = await compareReportWithClusters(report, unresolvedClusters)
       console.log(
         `Report ${report.debugId} ${isNewCluster ? "is new" : "is similar to unresolved"} Issue Cluster`,
@@ -127,6 +124,12 @@ class ReportRepository {
     } catch (error) {
       console.error("Error processing report", error)
     }
+  }
+
+  categorize = async (report: Report): Promise<string> => {
+    const category = await categorizeWithOllama(report.message)
+    report.category = category
+    return category
   }
 }
 export default new ReportRepository()

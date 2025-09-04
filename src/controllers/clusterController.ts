@@ -11,6 +11,12 @@ export const getUnresolvedClusters = (_req: Request, res: Response) => {
   res.json(clusters)
 }
 
+export const getUnresolvedCategorizedClusters = (req: Request, res: Response) => {
+  const category = req.query["category"] as string | undefined
+  const clusters = clusterRepo.findUnresolvedByCategory(category ?? "Onbekend")
+  res.json(clusters)
+}
+
 export const resolveCluster = (req: Request, res: Response) => {
   const id = Number(req.params["id"])
   clusterRepo.resolve(id)

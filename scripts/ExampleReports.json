@@ -2,138 +2,138 @@
   {
     "debugId": "1A",
     "message": "De lamp in de inkomhal is al enkele dagen stuk. Het is ’s avonds echt te donker om binnen te gaan.",
-    "category": "Defecte verlichting"
+    "debug_category": "Defecte verlichting"
   },
 
   {
     "debugId": "2A",
     "message": "De lift maakt een raar piepend geluid bij het naar beneden gaan. Misschien best eens laten nakijken.",
-    "category": "Liftproblemen"
+    "debug_category": "Liftproblemen"
   },
   {
     "debugId": "2B",
     "message": "Vanochtend werkte de lift helemaal niet, hij bleef gewoon op de gelijkvloerse verdieping staan.",
-    "category": "Liftproblemen"
+    "debug_category": "Liftproblemen"
   },
 
   {
     "debugId": "3A",
     "message": "In de kelder drupt er constant water uit een buis tegen het plafond. Er vormt zich al een plas.",
-    "category": "Waterlek of vochtprobleem"
+    "debug_category": "Waterlek of vochtprobleem"
   },
   {
     "debugId": "3B",
-    "message": "Ik merk vochtplekken op de muur van de garage. Het lijkt een lek in een leiding.",
-    "category": "Waterlek of vochtprobleem"
+    "message": "Ik merk vochtplekken op de muur van de kelder. Het lijkt een lek in een leiding.",
+    "debug_category": "Waterlek of vochtprobleem"
   },
   {
     "debugId": "3C",
     "message": "Er stroomt water in de berging naast de meters. Kan dit snel bekeken worden?",
-    "category": "Waterlek of vochtprobleem"
+    "debug_category": "Waterlek of vochtprobleem"
   },
   {
     "debugId": "4A",
     "message": "Er hangt een sterke rioolgeur in de inkomhal. Vooral ’s ochtends is het heel hinderlijk.",
-    "category": "Verstopping of geurhinder"
+    "debug_category": "Verstopping of geurhinder"
   },
   {
     "debugId": "4B",
     "message": "Het water in de gemeenschappelijke afvoerput loopt niet meer goed door.",
-    "category": "Verstopping of geurhinder"
+    "debug_category": "Verstopping of geurhinder"
   },
   {
     "debugId": "4C",
     "message": "In de kelder ruikt het heel fel naar riolering, misschien een verstopping?",
-    "category": "Verstopping of geurhinder"
+    "debug_category": "Verstopping of geurhinder"
   },
   {
-    "debugId": "5A",
-    "message": "De verwarming in de gang slaat niet meer aan, het blijft erg koud in de gemeenschappelijke delen.",
-    "category": "Verwarmingsproblemen"
+    "debugId": "5A1",
+    "message": "De verwarming in de gang op het tweede verdiep slaat niet meer aan, het blijft erg koud in de gemeenschappelijke delen.",
+    "debug_category": "Verwarmingsproblemen"
   },
   {
-    "debugId": "5B",
+    "debugId": "5B2",
     "message": "Ik heb gemerkt dat de radiator in de inkomhal lauw blijft, terwijl hij vroeger goed verwarmde.",
-    "category": "Verwarmingsproblemen"
+    "debug_category": "Verwarmingsproblemen"
   },
   {
-    "debugId": "5C",
-    "message": "De centrale verwarming doet het niet, het is onaangenaam koud in het gebouw.",
-    "category": "Verwarmingsproblemen"
+    "debugId": "5C3",
+    "message": "De centrale verwarming doet het niet, het is onaangenaam koud overal in het gebouw.",
+    "debug_category": "Verwarmingsproblemen"
   },
   {
     "debugId": "6A",
     "message": "De garagepoort sluit niet volledig, er blijft een kier open.",
-    "category": "Defecte garagepoort"
+    "debug_category": "Defecte garagepoort"
   },
   {
     "debugId": "6B",
     "message": "Mijn afstandsbediening werkt wel, maar de poort reageert niet meer.",
-    "category": "Defecte garagepoort"
+    "debug_category": "Defecte garagepoort"
   },
   {
     "debugId": "6C",
     "message": "De garagepoort blokkeert halverwege en gaat niet verder omhoog.",
-    "category": "Defecte garagepoort"
+    "debug_category": "Defecte garagepoort"
   },
   {
-    "debugId": "7A",
+    "debugId": "7A1",
     "message": "De verf in de traphal bladdert sterk af, het ziet er onverzorgd uit.",
-    "category": "Schade of slijtage"
+    "debug_category": "Schade of slijtage"
   },
   {
-    "debugId": "7B",
+    "debugId": "7B2",
     "message": "Er zit een scheur in de muur van de gang op de tweede verdieping.",
-    "category": "Schade of slijtage"
+    "debug_category": "Schade of slijtage"
   },
   {
-    "debugId": "7C",
+    "debugId": "7C3",
     "message": "Het plafond in de inkomhal vertoont vochtvlekken en brokkelt af.",
-    "category": "Schade of slijtage"
+    "debug_category": "Schade of slijtage"
   },
   {
-    "debugId": "8A",
+    "debugId": "8A1",
     "message": "De bewoners van appartement 2A draaien heel luide muziek tot diep in de nacht.",
-    "category": "Geluidsoverlast"
+    "debug_category": "Geluidsoverlast"
   },
   {
-    "debugId": "8B",
-    "message": "Er is voortdurend gebonk en lawaai boven mijn appartement, ook ’s avonds laat.",
-    "category": "Geluidsoverlast"
+    "debugId": "8B1",
+    "message": "Er is voortdurend gebonk en lawaai boven mijn appartement, ik woon op het eerste verdiep, ook ’s avonds laat.",
+    "debug_category": "Geluidsoverlast"
   },
   {
-    "debugId": "8C",
-    "message": "De laatste dagen zijn er hevige ruzies met veel geschreeuw in appartement 4C.",
-    "category": "Geluidsoverlast"
+    "debugId": "8C1",
+    "message": "De laatste dagen zijn er hevige ruzies met veel geschreeuw op het 2de verdiep.",
+    "debug_category": "Geluidsoverlast"
   },
   {
     "debugId": "9A",
-    "message": "Ik heb muizen gezien in de fietsenberging. Ze knagen aan spullen.",
-    "category": "Ongedierte"
+    "message": "Ik heb muizen gezien in de fietsenberging.",
+    "debug_category": "Ongedierte"
   },
   {
     "debugId": "9B",
-    "message": "Er lopen kakkerlakken rond in de keldergangen. Kan hier iets aan gedaan worden?",
-    "category": "Ongedierte"
+    "message": "Mijn fiets is bevuild door ongedierte. Kan hier iets aan gedaan worden?",
+    "debug_category": "Ongedierte"
   },
   {
     "debugId": "9C",
-    "message": "Er zitten duiven op het dak en in de dakgoot, met veel uitwerpselen op het terras.",
-    "category": "Ongedierte"
+    "message": "Er liggen veel uitwerpselen op het buiten.",
+    "debug_category": "Ongedierte"
   },
   {
     "debugId": "10A",
     "message": "Mijn brievenbus gaat niet meer goed dicht, ze blijft openstaan.",
-    "category": "Brievenbus of parlofoon"
+    "debug_category": "Brievenbus of parlofoon"
   },
   {
-    "debugId": "10B",
+    "debugId": "11A",
     "message": "De parlofoon op mijn appartement werkt niet: ik hoor de bel wel, maar geen stem.",
-    "category": "Brievenbus of parlofoon"
+    "debug_category": "Brievenbus of parlofoon"
   },
   {
-    "debugId": "10C",
+    "debugId": "12A",
     "message": "Wanneer bezoekers aanbellen, kan ik de deur niet openen met de parlofoonknop.",
-    "category": "Brievenbus of parlofoon"
+    "debug_category": "Brievenbus of parlofoon"
   }
 ]

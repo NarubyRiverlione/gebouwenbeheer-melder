@@ -11,7 +11,7 @@ export interface Report {
   status: string
   is_processed: boolean
   is_resolved: boolean
-  category: string | null
+  category?: string
   priority: string | null
   cluster_id: number | null
   created_at: string
@@ -29,4 +29,5 @@ export interface NewReport {
   category?: string | null
   priority?: string | null
   debugId?: string | null
+  debug_category?: string | null
 }

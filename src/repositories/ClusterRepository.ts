@@ -15,11 +15,11 @@ CREATE TABLE IF NOT EXISTS issue_cluster (
 db.prepare(createTable).run()
 
 class ClusterRepository {
-  new(main_issue: string): NewIssueCluster {
+  new(main_issue: string, category?: string): NewIssueCluster {
     return {
       main_issue,
       severity: "unknown",
-      category: "unknown",
+      category: category ?? "Onbekend",
       estimated_impact: null,
     }
   }
@@ -42,6 +42,11 @@ class ClusterRepository {
   }
   findUnresolved(): IssueCluster[] {
     return db.prepare("SELECT * FROM issue_cluster WHERE status = 'open'").all() as IssueCluster[]
+  }
+  findUnresolvedByCategory(categorie: string): IssueCluster[] {
+    return db
+      .prepare("SELECT * FROM issue_cluster WHERE status = 'open' AND category='" + categorie+"'")
+      .all() as IssueCluster[]
   }
 
   resolve(id: number): void {
