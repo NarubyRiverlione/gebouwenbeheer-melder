@@ -1,5 +1,7 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
+import ClusterRepository from "./ClusterRepository.js"
+import compareReportWithClusters from "./CompareRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -25,7 +27,7 @@ CREATE TABLE IF NOT EXISTS report (
 db.prepare(createTable).run()
 
 class ReportRepository {
-  create(data: NewReport): Report {
+  async create(data: NewReport, processNow: boolean): Promise<{ report: Report; isProcessed: boolean }> {
     const stmt = db.prepare(
       `INSERT INTO report
         (message, building, floor, apartment_Number,
@@ -50,7 +52,16 @@ class ReportRepository {
       debugId: data.debugId ?? null,
     }
     const info = stmt.run(payload)
-    return db.prepare("SELECT * FROM report WHERE id = ?").get(info.lastInsertRowid as number) as Report
+    const report = db
+      .prepare("SELECT * FROM report WHERE id = ?")
+      .get(info.lastInsertRowid as number) as Report
+
+    // if processNow is true, process this report immediately
+    if (processNow) {
+      await this.processOne(report)
+      return { report, isProcessed: true }
+    }
+    return { report, isProcessed: false }
   }
 
   findAll(): Report[] {
@@ -101,6 +112,21 @@ class ReportRepository {
   assignCluster(reportId: number, clusterId: number): void {
     db.prepare("UPDATE report SET cluster_id = ? WHERE id = ?").run(clusterId, reportId)
   }
-}
 
+  processOne = async (report: Report) => {
+    try {
+      console.log("Processing report", report.debugId)
+      // always get the latest unresolved clusters, in case new ones were created during this loop
+      const unresolvedClusters = ClusterRepository.findUnresolved()
+      const isNewCluster = await compareReportWithClusters(report, unresolvedClusters)
+      console.log(
+        `Report ${report.debugId} ${isNewCluster ? "is new" : "is similar to unresolved"} Issue Cluster`,
+      )
+      this.markProcessed(report)
+      console.log("--------------------")
+    } catch (error) {
+      console.error("Error processing report", error)
+    }
+  }
+}
 export default new ReportRepository()

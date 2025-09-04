@@ -9,19 +9,19 @@
       "runtimeArgs": ["tsx", "src/main.ts"],
       "cwd": "${workspaceFolder}",
       "sourceMaps": true,
-      "protocol": "inspector",
+
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "runtimeVersion": "20.19"
     },
     {
       "name": "Debug Compiled JavaScript",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/dist/main.js",
       "cwd": "${workspaceFolder}",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "sourceMaps": true,
-      "protocol": "inspector",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "preLaunchTask": "pnpm build"

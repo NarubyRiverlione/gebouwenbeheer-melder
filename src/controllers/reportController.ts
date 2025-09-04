@@ -2,12 +2,13 @@ import type { Request, Response } from "express"
 import reportRepo from "../repositories/ReportRepository.js"
 import type { NewReport } from "../models/Report.js"
 import ClusterRepository from "../repositories/ClusterRepository.js"
-import compareReportWithClusters from "../repositories/CompareRepository.js"
 
-export const createReport = (req: Request, res: Response) => {
-  const data = req.body as NewReport
-  const report = reportRepo.create(data)
-  res.status(201).json(report)
+// create a new report, set processNow to true to process it immediately
+export const createReport = async (req: Request, res: Response) => {
+  const data = req.body["report"] as NewReport
+  const processNow = req.body["processNow"] ?? false
+  const reportResult = await reportRepo.create(data, processNow)
+  res.status(201).json(reportResult)
 }
 
 export const listReports = (_req: Request, res: Response) => {
@@ -64,12 +65,7 @@ export const processReports = (_req: Request, res: Response) => {
   const unprocessedReports = reportRepo.queryUnprocessed()
 
   unprocessedReports.forEach(async (report) => {
-    console.log("Processing report", report.debugId)
-    // always get the latest unresolved clusters, in case new ones were created during this loop
-    const unresolvedClusters = ClusterRepository.findUnresolved()
-    const isNewCluster = await compareReportWithClusters(report, unresolvedClusters)
-    console.log(`Report ${report.debugId} ${isNewCluster ? "is new" : "existing unresolved"} Issue Cluster`)
-    reportRepo.markProcessed(report)
+    await reportRepo.processOne(report)
   })
 
   // answer with all unresolved clusters, so the frontend can show the updated list
