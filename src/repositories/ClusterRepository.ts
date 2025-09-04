@@ -28,6 +28,9 @@ class ClusterRepository {
       .get(info.lastInsertRowid as number) as IssueCluster
   }
 
+  findAll(): IssueCluster[] {
+    return db.prepare("SELECT * FROM issue_cluster").all() as IssueCluster[]
+  }
   findUnresolved(): IssueCluster[] {
     return db.prepare("SELECT * FROM issue_cluster WHERE status = 'open'").all() as IssueCluster[]
   }

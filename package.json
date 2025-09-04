@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest run ",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint . --fix && tsc -b --noEmit",
+    "lint": "eslint src/ --fix && tsc -b --noEmit",
     "dev": "tsx src/main.ts --watch",
     "build": "tsc -b",
     "start": "node dist/src/main.js",

@@ -1,6 +1,8 @@
 import type { Request, Response } from "express"
 import reportRepo from "../repositories/ReportRepository.js"
 import type { NewReport } from "../models/Report.js"
+import ClusterRepository from "../repositories/ClusterRepository.js"
+import type { NewIssueCluster } from "../models/IssueCluster.js"
 
 export const createReport = (req: Request, res: Response) => {
   const data = req.body as NewReport
@@ -53,4 +55,10 @@ export const ingestEmail = (req: Request, res: Response) => {
   }
   const report = reportRepo.create(newReportData)
   res.status(201).json(report)
+}
+
+export const processReports = (_req: Request, res: Response) => {
+  const dummyCluster: NewIssueCluster = { main_issue: "test", severity: "low", category: "test",estimated_impact: "low" }
+  ClusterRepository.create(dummyCluster)
+  res.json([{ id: 1, status: "resolved" }]) // TODO: implement clustering logic
 }

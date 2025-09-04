@@ -49,30 +49,32 @@ describe("API Endpoints", () => {
     const res = await request(app).get("/reports/unprocessed").expect(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body).toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: reportId, message: "API test report" })])
+      expect.arrayContaining([expect.objectContaining({ id: reportId, message: "API test report" })]),
     )
   })
 
-  it("POST /ingest creates a report with validation", async () => {
+  it("POST /reports/ingest creates a report with validation", async () => {
     const res = await request(app).post("/ingest").send({ message: "Ingest report" }).expect(201)
     expect(res.body.message).toBe("Ingest report")
   })
 
-  it("POST /clusters/process clusters reports", async () => {
-    const res = await request(app).post("/clusters/process").expect(200)
+  it("POST /reports/process clusters reports", async () => {
+    const res = await request(app).post("/reports/process").expect(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body.length).toBeGreaterThanOrEqual(1)
     clusterId = res.body[0].id
   })
 
-  it("GET /clusters returns unresolved clusters", async () => {
+  it("GET /clusters returns all clusters", async () => {
     const res = await request(app).get("/clusters").expect(200)
     expect(res.body).toEqual(expect.arrayContaining([expect.objectContaining({ id: clusterId })]))
   })
 
   it("POST /clusters/:id/resolve resolves cluster", async () => {
     await request(app).post(`/clusters/${clusterId}/resolve`).expect(204)
-    const res = await request(app).get("/clusters").expect(200)
+    const res = await request(app).get("/clusters/unresolved").expect(200)
     expect(res.body.find((c: any) => c.id === clusterId)).toBeUndefined()
   })
+
+
 })

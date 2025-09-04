@@ -2,3 +2,6 @@ dist
 *.sqlite
 coverage
 
+models
+onnx_model
+__pycache__
