@@ -15,6 +15,7 @@ export interface Report {
   priority: string | null
   cluster_id: number | null
   created_at: string
+  debugId?: string | null
 }
 
 export interface NewReport {
@@ -27,4 +28,5 @@ export interface NewReport {
   reporter_phone?: string | null
   category?: string | null
   priority?: string | null
+  debugId?: string | null
 }

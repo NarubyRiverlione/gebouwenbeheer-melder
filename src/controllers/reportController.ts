@@ -2,7 +2,7 @@ import type { Request, Response } from "express"
 import reportRepo from "../repositories/ReportRepository.js"
 import type { NewReport } from "../models/Report.js"
 import ClusterRepository from "../repositories/ClusterRepository.js"
-import CompareReportWithClusters from "../repositories/CompareRepository.js"
+import compareReportWithClusters from "../repositories/CompareRepository.js"
 
 export const createReport = (req: Request, res: Response) => {
   const data = req.body as NewReport
@@ -63,10 +63,12 @@ export const ingestEmail = (req: Request, res: Response) => {
 export const processReports = (_req: Request, res: Response) => {
   const unprocessedReports = reportRepo.queryUnprocessed()
 
-  unprocessedReports.forEach((report) => {
+  unprocessedReports.forEach(async (report) => {
+    console.log("Processing report", report.debugId)
     // always get the latest unresolved clusters, in case new ones were created during this loop
     const unresolvedClusters = ClusterRepository.findUnresolved()
-    CompareReportWithClusters(report, unresolvedClusters)
+    const isNewCluster = await compareReportWithClusters(report, unresolvedClusters)
+    console.log(`Report ${report.debugId} ${isNewCluster ? "is new" : "existing unresolved"} Issue Cluster`)
     reportRepo.markProcessed(report)
   })
 

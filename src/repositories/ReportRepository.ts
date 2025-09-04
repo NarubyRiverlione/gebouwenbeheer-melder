@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS report (
   is_resolved BOOLEAN DEFAULT false,
   category TEXT,
   priority TEXT,
+  debugId TEXT,
   cluster_id INTEGER,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )`
@@ -29,11 +30,11 @@ class ReportRepository {
       `INSERT INTO report
         (message, building, floor, apartment_Number,
          reporter_name, reporter_email, reporter_phone,
-         category, priority)
+         category, priority,debugId)
        VALUES
         (@message, @building, @floor, @apartment_Number,
          @reporter_name, @reporter_email, @reporter_phone,
-         @category, @priority)`,
+         @category, @priority,@debugId)`,
     )
     // normalize undefined to null for optional fields
     const payload = {
@@ -46,6 +47,7 @@ class ReportRepository {
       reporter_phone: data.reporter_phone ?? null,
       category: data.category ?? null,
       priority: data.priority ?? null,
+      debugId: data.debugId ?? null,
     }
     const info = stmt.run(payload)
     return db.prepare("SELECT * FROM report WHERE id = ?").get(info.lastInsertRowid as number) as Report
