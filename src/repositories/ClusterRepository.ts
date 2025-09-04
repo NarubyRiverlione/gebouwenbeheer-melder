@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS issue_cluster (
 db.prepare(createTable).run()
 
 class ClusterRepository {
+  new(main_issue: string): NewIssueCluster {
+    return {
+      main_issue,
+      severity: "unknown",
+      category: "unknown",
+      estimated_impact: null,
+    }
+  }
+
   create(data: NewIssueCluster): IssueCluster {
     const stmt = db.prepare(
       `INSERT INTO issue_cluster

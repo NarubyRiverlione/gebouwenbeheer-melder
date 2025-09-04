@@ -1,4 +1,4 @@
-export interface IssueCluster {
+export  interface IssueCluster {
   id: number
   main_issue: string
   severity: string

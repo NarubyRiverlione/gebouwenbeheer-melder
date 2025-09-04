@@ -4,6 +4,17 @@ Accept: application/json
 
 ###
 
+### List Unprocessed Reports
+GET http://localhost:3000/reports/getUnprocessedReports
+Accept: application/json
+
+###
+### Get Amount Unprocessed Reports
+GET http://localhost:3000/reports/countUnprocessedReports
+Accept: application/json
+
+###
+
 ### Create a Report
 POST http://localhost:3000/reports
 Content-Type: application/json
@@ -15,22 +26,13 @@ Content-Type: application/json
 
 ###
 
-### Ingest Email
-POST http://localhost:3000/ingest
-Content-Type: text/plain
-
-Subject: Voorbeeld Onderwerp
-Body: Voorbeeld e-maillichaam met probleemdetails
-
-###
-
-### Process Clusters
-POST http://localhost:3000/clusters/process
+### Process Reports
+POST http://localhost:3000/reports/process
 
 ###
 
 ### List Unresolved Clusters
-GET http://localhost:3000/clusters
+GET http://localhost:3000/clusters/unresolved
 Accept: application/json
 
 ###

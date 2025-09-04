@@ -17,7 +17,7 @@ const REPORTS_URL = `http://localhost:${PORT}/reports`
 async function main() {
   try {
     const raw = await fs.readFile(
-      new URL('../ExampleReports.json', import.meta.url),
+      new URL('./ExampleReports.json', import.meta.url),
       'utf-8'
     )
     const reports = JSON.parse(raw) as Array<Record<string, any>>

@@ -87,8 +87,9 @@ class ReportRepository {
     return db.prepare(sql).all(params) as Report[]
   }
 
-  markProcessed(id: number): void {
-    db.prepare("UPDATE report SET is_processed = 1 WHERE id = ?").run(id)
+  markProcessed(report: Report): void {
+    report.is_processed = true // mark in object as well
+    db.prepare("UPDATE report SET is_processed = 1 WHERE id = ?").run(report.id)
   }
 
   markResolvedByCluster(clusterId: number): void {
