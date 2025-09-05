@@ -18,7 +18,7 @@ U bent een expert in het categoriseren van onderhoudsproblemen in woongebouwen. 
 We hebben de volgende bestaande onopgeloste probleemclusters in ons systeem.
 ${clustersText}
 
-Bepaal of het gemelde probleem vergelijkbaar is met een van de bestaande probleemclusters.
+Bepaal of het gemelde probleem vergelijkbaar is met een van de bestaande probleemclusters. Let er op dat ook de locatie van het gemelde probleem mee kan spelen in de vergelijking.
 Elke probleemcluster begint met een cluster_id, gebruik dit niet om te vergelijken, maar alleen om te antwoorden welk cluster overeenkomt.
 Antwoord in json-formaat met een van de twee onderstaande antwoorden:
 1. Als het vergelijkbaar is met een bestaand cluster, antwoord dan met:{"similar": true, "cluster_id": cluster_id}
