@@ -18,15 +18,18 @@ describe("API Endpoints", () => {
     const res = await request(app)
       .post("/reports")
       .send({
-        message: "API test report",
-        building: "A",
-        floor: "1",
-        apartment_Number: "101",
-        reporter_name: "Tester",
-        reporter_email: "test@example.com",
-        reporter_phone: "12345",
-        category: "test",
-        priority: "low",
+        report: {
+          message: "API test report",
+          building: "A",
+          floor: "1",
+          apartment_Number: "101",
+          reporter_name: "Tester",
+          reporter_email: "test@example.com",
+          reporter_phone: "12345",
+          category: "test",
+          priority: "low",
+        },
+        processNow: false,
       })
       .expect(201)
     expect(res.body.id).toBeGreaterThan(0)
@@ -75,6 +78,4 @@ describe("API Endpoints", () => {
     const res = await request(app).get("/clusters/unresolved").expect(200)
     expect(res.body.find((c: any) => c.id === clusterId)).toBeUndefined()
   })
-
-
 })

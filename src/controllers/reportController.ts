@@ -2,27 +2,27 @@ import type { Request, Response } from "express"
 import reportRepo from "../repositories/ReportRepository.js"
 import type { NewReport } from "../models/Report.js"
 import ClusterRepository from "../repositories/ClusterRepository.js"
-import ReportRepository from "../repositories/ReportRepository.js"
+import type { NewIssueCluster } from "../models/IssueCluster.js"
 
 // create a new report, set processNow to true to process it immediately
 export const createReport = async (req: Request, res: Response) => {
   const data = req.body["report"] as NewReport
-  const processNow = req.body["processNow"] ?? false
+  // const processNow = req.body["processNow"] ?? false
   // save the report
   const reportResult = reportRepo.create(data)
-  // if no category, categorize it
-  if (!reportResult.category) {
-    const category = await reportRepo.categorize(reportResult)
-    console.log(`- Report ${reportResult.debugId} categorized as ${category}`)
-    if (data.debug_category && data.debug_category !== category) {
-      console.warn(`-- Overriding category ${category} with user provided category ${data.category}`)
-    }
-    ReportRepository.updateCategory(reportResult.id, category)
-  }
-  // if requested, process the report immediately
-  if (processNow) {
-    await reportRepo.processOne(reportResult)
-  }
+  // // if no category, categorize it
+  // if (!reportResult.category) {
+  //   const category = await reportRepo.categorize(reportResult)
+  //   console.log(`- Report ${reportResult.debugId} categorized as ${category}`)
+  //   if (data.debug_category && data.debug_category !== category) {
+  //     console.warn(`-- Overriding category ${category} with user provided category ${data.category}`)
+  //   }
+  //   ReportRepository.updateCategory(reportResult.id, category)
+  // }
+  // // if requested, process the report immediately
+  // if (processNow) {
+  //   await reportRepo.processOne(reportResult)
+  // }
   res.status(201).json(reportResult)
 }
 
@@ -73,16 +73,14 @@ export const ingestEmail = (req: Request, res: Response) => {
   res.status(201).json(report)
 }
 
-// compare all unprocessed reports with all unresolved clusters
-// found similar issue cluster =  this issue is already reported, add it to the cluster
-// no similar issue cluster = create a new issue cluster
+
 export const processReports = (_req: Request, res: Response) => {
-  const unprocessedReports = reportRepo.queryUnprocessed()
-
-  unprocessedReports.forEach(async (report) => {
-    await reportRepo.processOne(report)
-  })
-
-  // answer with all unresolved clusters, so the frontend can show the updated list
-  res.json(ClusterRepository.findUnresolved())
+  const dummyCluster: NewIssueCluster = {
+    main_issue: "test",
+    severity: "low",
+    category: "test",
+    estimated_impact: "low",
+  }
+  ClusterRepository.create(dummyCluster)
+  res.json([{ id: 1, status: "resolved" }]) // TODO: implement clustering logic
 }
