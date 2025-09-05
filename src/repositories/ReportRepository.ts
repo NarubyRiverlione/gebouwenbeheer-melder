@@ -1,6 +1,6 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
-
+import { CompareReport } from "./GoogleAIRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -109,6 +109,8 @@ class ReportRepository {
     db.prepare("UPDATE report SET category = ? WHERE id = ?").run(category, reportId)
   }
 
-
+  processOne(report: Report) {
+    CompareReport(report)
+  }
 }
 export default new ReportRepository()
