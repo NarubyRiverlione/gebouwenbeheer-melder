@@ -1,4 +1,4 @@
-export  interface IssueCluster {
+export interface IssueCluster {
   id: number
   main_issue: string
   severity: string
@@ -6,6 +6,7 @@ export  interface IssueCluster {
   estimated_impact: string | null
   created_date: string
   status: string
+  linked_reports?: { id: number; message: string }[]
 }
 
 export type NewIssueCluster = Omit<IssueCluster, "id" | "created_date" | "status">

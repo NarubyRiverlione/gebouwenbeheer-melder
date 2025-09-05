@@ -38,19 +38,35 @@ class ClusterRepository {
   }
 
   findAll(): IssueCluster[] {
-    return db.prepare("SELECT * FROM issue_cluster").all() as IssueCluster[]
+    const clusters = db.prepare("SELECT * FROM issue_cluster").all() as IssueCluster[]
+    const clusterWithLinkedReports = clusters.map((cluster) => this.addLinkedReport(cluster))
+    return clusterWithLinkedReports
   }
   findUnresolved(): IssueCluster[] {
-    return db.prepare("SELECT * FROM issue_cluster WHERE status = 'open'").all() as IssueCluster[]
+    const clusters = db.prepare("SELECT * FROM issue_cluster WHERE status = 'open'").all() as IssueCluster[]
+    const clusterWithLinkedReports = clusters.map((cluster) => this.addLinkedReport(cluster))
+    return clusterWithLinkedReports
   }
   findUnresolvedByCategory(categorie: string): IssueCluster[] {
-    return db
-      .prepare("SELECT * FROM issue_cluster WHERE status = 'open' AND category='" + categorie+"'")
+    const clusters = db
+      .prepare("SELECT * FROM issue_cluster WHERE status = 'open' AND category='" + categorie + "'")
       .all() as IssueCluster[]
+    const clusterWithLinkedReports = clusters.map((cluster) => this.addLinkedReport(cluster))
+    return clusterWithLinkedReports
   }
 
   resolve(id: number): void {
     db.prepare("UPDATE issue_cluster SET status = 'resolved' WHERE id = ?").run(id)
+  }
+
+  addLinkedReport(cluster: IssueCluster): IssueCluster {
+    const linked_reports = db
+      .prepare("SELECT id,message FROM report WHERE cluster_id = ?")
+      .all(cluster.id) as {
+      id: number
+      message: string
+    }[]
+    return { ...cluster, linked_reports }
   }
 }
 
