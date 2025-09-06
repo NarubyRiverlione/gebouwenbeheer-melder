@@ -1,31 +1,14 @@
 import type { Report } from "../models/Report.js"
-import type { IssueCluster } from "../models/IssueCluster.js"
 import ClusterRepository from "./ClusterRepository.js"
-import type { GenerateResponse } from "ollama"
+import type { EmbedResponse, GenerateResponse } from "ollama"
 import ReportRepository from "./ReportRepository.js"
 import { Ollama } from "ollama"
+
 const model = process.env["OLLAMA_MODEL"]
 if (!model) throw new Error("OLLAMA_MODEL is not set in environment variables")
+const embeddingModel = process.env["OLLAMA_EMBEDDING_MODEL"]
+if (!embeddingModel) throw new Error("OLLAMA_EMBEDDING_MODEL is not set in environment variables")
 const ollama = new Ollama()
-
-type CompareResult = { similar: true; cluster_id: number } | { similar: false }
-
-const createComparePrompt = (message: string, clusters: IssueCluster[]): string => {
-  const clustersText = `${clusters.map((cluster) => `${cluster.id}   ${cluster.main_issue}`).join("\n")}`
-  //  console.debug(`-- message compared with : ${clustersText}`)
-  return `
-U bent een expert in het categoriseren van onderhoudsproblemen in woongebouwen. Een bewoner heeft het volgende probleem gemeld: "${message}"
-We hebben de volgende bestaande onopgeloste probleemclusters in ons systeem.
-${clustersText}
-
-Bepaal of het gemelde probleem vergelijkbaar is met een van de bestaande probleemclusters. Let er op dat ook de locatie van het gemelde probleem mee kan spelen in de vergelijking.
-Elke probleemcluster begint met een cluster_id, gebruik dit niet om te vergelijken, maar alleen om te antwoorden welk cluster overeenkomt.
-Antwoord in json-formaat met een van de twee onderstaande antwoorden:
-1. Als het vergelijkbaar is met een bestaand cluster, antwoord dan met:{"similar": true, "cluster_id": cluster_id}
-2. Als het niet vergelijkbaar is met een van de bestaande clusters, antwoord dan met:{"similar": false}
-Geef alleen een van de twee bovenstaande antwoorden zonder verdere uitleg.
-`
-}
 
 const createCategoryPrompt = (message: string): string => {
   const categories = [
@@ -62,19 +45,6 @@ export const categorizeWithOllama = async (message: string): Promise<string> => 
   return result.category ?? "Categorie onbekend"
 }
 
-const compareWithOllama = async (prompt: string): Promise<CompareResult> => {
-  const response: GenerateResponse = await ollama.generate({
-    model,
-    prompt,
-    format: "json",
-    stream: false,
-    // think: true,
-  })
-
-  const result: CompareResult = JSON.parse(response.response as string)
-  return result
-}
-
 const createNewCluster = (report: Report) => {
   const newCluster = ClusterRepository.new(report.message, report.category)
   const createdCluster = ClusterRepository.create(newCluster)
@@ -82,26 +52,40 @@ const createNewCluster = (report: Report) => {
   return createdCluster.id
 }
 
-// return if report is a new issue cluster
-export const compareReportWithClusters = async (report: Report, clusters: IssueCluster[]) => {
-  // if no unresolved clusters, create a new cluster
-  if (clusters.length === 0) {
+export const compareReportWithClusters = async (report: Report) => {
+  const unresolvedClustersByCategory = ClusterRepository.findUnresolvedByCategory(
+    report.category || "Onbekend",
+  )
+  // no unresolved clusters for this reported category, create a new cluster
+  if (unresolvedClustersByCategory.length === 0) {
     console.log("- No unresolved clusters, creating new cluster for report", report.debugId)
     createNewCluster(report)
     return Promise.resolve(true)
   }
   console.log(
-    `- Comparing report ${report.debugId} with ${clusters.length} unresolved clusters for category ${report.category} `,
+    `found ${unresolvedClustersByCategory.length} unresolved cluster for report category ${report.category}`,
   )
-  // create prompt with the report message and the list of existing clusters
-  const prompt = createComparePrompt(report.message, clusters)
-  const result = await compareWithOllama(prompt)
-  if (result.similar) {
+  const compare: CompareMessages[] = [
+    { id: report.id, message: report.message },
+    ...unresolvedClustersByCategory.map((c) => ({ id: c.id, message: c.main_issue })),
+  ]
+
+  const embeddings: EmbeddingsResult[] = await getEmbeddings(compare)
+  if (!embeddings) {
+    throw new Error("No embeddings returned from Google GenAI")
+  }
+  const compareResults: CompareResult[] = compareEmbeddings(embeddings)
+  if (!compareResults || compareResults.length < 1) {
+    throw new Error("No compare results")
+  }
+  const bestResult = compareResults[0]?.score ?? 0
+  const threshold: number = parseInt(process.env["REPORT_SIMILARITY_THRESHOLD"] ?? "60", 10)
+  if (bestResult > threshold) {
     // if similar issue cluster =  this issue is already reported, add it to the cluster
-    console.log("- Report", report.debugId, "is similar to cluster", result.cluster_id)
+    console.log("- Report", report.debugId, "is similar to cluster", compareResults[0]?.id)
     // TODO check is report and found cluster have the same category,
 
-    ReportRepository.assignCluster(report.id, result.cluster_id)
+    ReportRepository.assignCluster(report.id, compareResults[0]?.id ?? 0)
     return Promise.resolve(false)
   }
   // if no similar issue cluster = create a new issue cluster
@@ -110,4 +94,49 @@ export const compareReportWithClusters = async (report: Report, clusters: IssueC
     `- Report ${report.debugId}  is not similar to any existing cluster, creating new cluster ${newClusterId}`,
   )
   return Promise.resolve(true)
+}
+
+import cosineSimilarity from "compute-cosine-similarity"
+
+type EmbeddingsResult = {
+  id: number | null
+  embedding: number[] | null
+}
+type CompareResult = {
+  id: number
+  score: number
+}
+type CompareMessages = {
+  id: number
+  message: string
+}
+
+const getEmbeddings = async (compare: CompareMessages[]): Promise<EmbeddingsResult[]> => {
+  const input = compare.map((c) => c.message)
+  const response: EmbedResponse = await ollama.embed({ model: embeddingModel, input })
+
+  if (!response.embeddings) throw new Error("No embedding found")
+  const embeddings: EmbeddingsResult[] = response.embeddings.map((embedding, index) => ({
+    id: compare[index]?.id ?? null,
+    embedding,
+  }))
+
+  return embeddings
+}
+
+const compareEmbeddings = (embeddings: EmbeddingsResult[]): CompareResult[] => {
+  if (embeddings.length < 2) throw new Error("no embeddings to compare")
+
+  const base = embeddings[0]?.embedding ?? []
+  const results: CompareResult[] = []
+
+  for (let i = 1; i < embeddings.length; i++) {
+    const compare = embeddings[i]?.embedding ?? []
+    const similarity = cosineSimilarity(base, compare)
+    // console.log(`- similarity with issue cluster ${embeddings[i]?.id}: ${similarity})`)
+    if (!similarity) throw new Error("No similarity score calculated")
+    results.push({ id: embeddings[i]?.id ?? 0, score: similarity * 100 })
+  }
+  results.sort((a, b) => b.score - a.score)
+  return results
 }

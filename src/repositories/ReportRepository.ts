@@ -1,6 +1,6 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
-import ClusterRepository from "./ClusterRepository.js"
+
 import { compareReportWithClusters, categorizeWithOllama } from "./OllamaRepository.js"
 
 // Ensure table exists
@@ -113,9 +113,7 @@ class ReportRepository {
   processOne = async (report: Report) => {
     try {
       console.log("Processing report", report.debugId)
-      // always get the latest unresolved clusters, in case new ones were created during this loop
-      const unresolvedClusters = ClusterRepository.findUnresolvedByCategory(report.category ?? "Onbekend")
-      const isNewCluster = await compareReportWithClusters(report, unresolvedClusters)
+      const isNewCluster = await compareReportWithClusters(report)
       console.log(
         `Report ${report.debugId} ${isNewCluster ? "is new" : "is similar to unresolved"} Issue Cluster`,
       )
