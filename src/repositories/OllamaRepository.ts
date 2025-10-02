@@ -74,6 +74,7 @@ export const compareReportWithClusters = async (report: Report) => {
   if (!embeddings) {
     throw new Error("No embeddings returned from Google GenAI")
   }
+  saveEmbeddings(embeddings)
   const compareResults: CompareResult[] = compareEmbeddings(embeddings)
   if (!compareResults || compareResults.length < 1) {
     throw new Error("No compare results")
@@ -99,8 +100,8 @@ export const compareReportWithClusters = async (report: Report) => {
 import cosineSimilarity from "compute-cosine-similarity"
 
 type EmbeddingsResult = {
-  id: number | null
-  embedding: number[] | null
+  id: number
+  embedding: number[]
 }
 type CompareResult = {
   id: number
@@ -116,10 +117,13 @@ const getEmbeddings = async (compare: CompareMessages[]): Promise<EmbeddingsResu
   const response: EmbedResponse = await ollama.embed({ model: embeddingModel, input })
 
   if (!response.embeddings) throw new Error("No embedding found")
-  const embeddings: EmbeddingsResult[] = response.embeddings.map((embedding, index) => ({
-    id: compare[index]?.id ?? null,
-    embedding,
-  }))
+  const embeddings: EmbeddingsResult[] = response.embeddings.map((embedding, index) => {
+    if (!compare[index]?.id) throw new Error("Cannot find compare with index " + index)
+    return {
+      id: compare[index]?.id,
+      embedding,
+    }
+  })
 
   return embeddings
 }
@@ -139,4 +143,10 @@ const compareEmbeddings = (embeddings: EmbeddingsResult[]): CompareResult[] => {
   }
   results.sort((a, b) => b.score - a.score)
   return results
+}
+
+const saveEmbeddings = (embeddings: EmbeddingsResult[]) => {
+  embeddings.forEach((embedding) => {
+    ClusterRepository.updateEmbeddings(embedding.id, embedding.embedding)
+  })
 }

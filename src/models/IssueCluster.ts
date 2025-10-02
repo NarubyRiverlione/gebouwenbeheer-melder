@@ -7,6 +7,7 @@ export interface IssueCluster {
   created_date: string
   status: string
   linked_reports?: { id: number; message: string }[]
+  embeddings?: number[]
 }
 
 export type NewIssueCluster = Omit<IssueCluster, "id" | "created_date" | "status">

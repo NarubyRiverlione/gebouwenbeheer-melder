@@ -49,8 +49,8 @@ class ClusterRepository {
   }
   findUnresolvedByCategory(categorie: string): IssueCluster[] {
     const clusters = db
-      .prepare("SELECT * FROM issue_cluster WHERE status = 'open' AND category='" + categorie + "'")
-      .all() as IssueCluster[]
+      .prepare("SELECT * FROM issue_cluster WHERE status = 'open' AND category = ?")
+      .all(categorie) as IssueCluster[]
     const clusterWithLinkedReports = clusters.map((cluster) => this.addLinkedReport(cluster))
     return clusterWithLinkedReports
   }
@@ -67,6 +67,10 @@ class ClusterRepository {
       message: string
     }[]
     return { ...cluster, linked_reports }
+  }
+
+  updateEmbeddings(id:number, embeddings:number[]) {
+    db.prepare("UPDATE issue_cluster SET embeddings = ? WHERE id = ?").run(embeddings, id)
   }
 }
 

@@ -118,7 +118,7 @@ class ReportRepository {
         `Report ${report.debugId} ${isNewCluster ? "is new" : "is similar to unresolved"} Issue Cluster`,
       )
       this.markProcessed(report)
-      console.log("--------------------")
+      console.debug("--------------------")
     } catch (error) {
       console.error("Error processing report", error)
     }
