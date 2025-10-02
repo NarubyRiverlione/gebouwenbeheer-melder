@@ -1,6 +1,7 @@
 import db from "../utils/db.js"
 import type { Report, NewReport } from "../models/Report.js"
 
+import { compareReportWithClusters, categorizeWithOllama } from "./OllamaRepository.js"
 
 // Ensure table exists
 const createTable = `
@@ -109,6 +110,24 @@ class ReportRepository {
     db.prepare("UPDATE report SET category = ? WHERE id = ?").run(category, reportId)
   }
 
+  processOne = async (report: Report) => {
+    try {
+      console.log("Processing report", report.debugId)
+      const isNewCluster = await compareReportWithClusters(report)
+      console.log(
+        `Report ${report.debugId} ${isNewCluster ? "is new" : "is similar to unresolved"} Issue Cluster`,
+      )
+      this.markProcessed(report)
+      console.debug("--------------------")
+    } catch (error) {
+      console.error("Error processing report", error)
+    }
+  }
 
+  categorize = async (report: Report): Promise<string> => {
+    const category = await categorizeWithOllama(report.message)
+    report.category = category
+    return category
+  }
 }
 export default new ReportRepository()

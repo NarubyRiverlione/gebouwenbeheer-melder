@@ -8,7 +8,7 @@
     "test": "vitest run ",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ --fix && tsc -b --noEmit",
-    "dev": "tsx src/main.ts --watch",
+    "dev": "tsx src/main.ts",
     "build": "tsc -b",
     "start": "node dist/src/main.js",
     "insertExample": "tsx scripts/insertExample.ts",
@@ -35,15 +35,24 @@
     "globals": "^16.3.0",
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
+    "ts-node-dev": "^2.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
     "better-sqlite3": "^12.2.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "compute-cosine-similarity": "^1.1.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "ollama": "^0.5.17"
+    "ollama": "^0.5.17",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   }
 }

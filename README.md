@@ -4,20 +4,20 @@ Structured issue reporting and clustering system built with Node.js, Express, an
 
 ## Features
 
-- Store and query structured issue reports  
-- Bulk ingest email content into structured reports with validation  
-- Automatic clustering of unprocessed reports  
-- Mark clusters resolved (cascades resolution to reports)  
-- Filter and count reports by processed/resolved status and date range  
+- Store and query structured issue reports
+- Bulk ingest email content into structured reports with validation
+- Automatic clustering of unprocessed reports
+- Mark clusters resolved (cascades resolution to reports)
+- Filter and count reports by processed/resolved status and date range
 
 ## Tech Stack
 
-- Node.js (ESM) with TypeScript  
-- Express.js for REST APIs  
-- SQLite (via better-sqlite3) for data storage  
-- Vitest & Supertest for unit/integration tests  
-- ESLint + Prettier for linting/formatting  
-- pnpm for package management  
+- Node.js (ESM) with TypeScript
+- Express.js for REST APIs
+- SQLite (via better-sqlite3) for data storage
+- Vitest & Supertest for unit/integration tests
+- ESLint + Prettier for linting/formatting
+- pnpm for package management
 - GitHub Actions for CI (Node.js 18.x & 20.x)
 
 ## Setup
@@ -44,14 +44,40 @@ pnpm dev
 # Server listens on http://localhost:3000
 ```
 
+## Development — NestJS
+
+This project has been migrated to a minimal NestJS structure. The repository logic (repositories and DB access) is preserved, and lightweight Nest controllers/services expose the same endpoints.
+
+Run locally (ESM-friendly):
+
+```bash
+pnpm run dev
+# or explicitly: pnpm exec tsx src/main.ts
+```
+
+Smoke-test examples (use these to verify the server is healthy):
+
+```bash
+# List reports (expect JSON array)
+curl -sS http://localhost:3000/reports | jq .
+
+# Create a simple report
+curl -sS -X POST http://localhost:3000/reports -H 'Content-Type: application/json' -d '{"message":"hello"}' | jq .
+```
+
+Notes:
+
+- The `dev` script uses `tsx` for ESM-compatible runtime. If you prefer `ts-node-dev`, adjust the script and ts-node configuration for ESM.
+- Controllers and services are under `src/reports` and `src/clusters`. Repositories remain in `src/repositories`.
+
 ## Scripts
 
-- `pnpm lint` – run ESLint & TypeScript checks  
-- `pnpm test` – run Vitest unit & integration tests  
-- `pnpm test -- --coverage` – generate coverage report (text, lcov, html)  
-- `pnpm build` – compile TypeScript to `dist/`  
-- `pnpm start` – run compiled server  
-- `pnpm insertExample` – bulk insert example reports via the API  
+- `pnpm lint` – run ESLint & TypeScript checks
+- `pnpm test` – run Vitest unit & integration tests
+- `pnpm test -- --coverage` – generate coverage report (text, lcov, html)
+- `pnpm build` – compile TypeScript to `dist/`
+- `pnpm start` – run compiled server
+- `pnpm insertExample` – bulk insert example reports via the API
 
 ## API Reference
 
@@ -59,45 +85,47 @@ pnpm dev
 
 - **POST /reports**  
   Create a new report  
-  Body: `NewReport` JSON  
+  Body: `NewReport` JSON
 
 - **GET /reports**  
-  List all reports  
+  List all reports
 
 - **GET /reports/unprocessed**  
-  List unprocessed reports  
+  List unprocessed reports
 
 - **GET /reports/countUnprocessed**  
-  `{ count: number }` of unprocessed reports  
+  `{ count: number }` of unprocessed reports
 
 - **GET /reports/query?start=&end=&processed=&resolved=**  
-  Filter reports by timestamp range and status flags  
+  Filter reports by timestamp range and status flags
 
 - **POST /ingest**  
   Ingest raw email content into a report  
-  Body: Partial report JSON; requires `message` field  
+  Body: Partial report JSON; requires `message` field
 
 ### Clusters
 
 - **POST /clusters/process**  
-  Process and cluster all unprocessed reports  
+  Process and cluster all unprocessed reports
 
 - **GET /clusters**  
-  List all unresolved clusters  
+  List all unresolved clusters
 
 - **POST /clusters/:id/resolve**  
-  Mark a cluster (and its reports) as resolved  
+  Mark a cluster (and its reports) as resolved
 
 ## Testing
 
 All tests run against an in-memory SQLite database.
 
 Run tests:
+
 ```bash
 pnpm test
 ```
 
 Generate coverage report:
+
 ```bash
 pnpm test -- --coverage
 ```
@@ -107,16 +135,18 @@ Coverage output includes text summary, lcov, and HTML report in `/coverage` dire
 ## CI/CD
 
 Workflows defined under `.github/workflows/` for:
-- Linting (ESLint & TypeScript)  
-- Testing (Vitest)  
-- Building (TypeScript compile)  
+
+- Linting (ESLint & TypeScript)
+- Testing (Vitest)
+- Building (TypeScript compile)
 
 ## Debugging
 
-VSCode launch configurations are available in `.vscode/launch.json`.  
-- "Debug TypeScript (tsx)" runs the app via `tsx` with source maps.  
+VSCode launch configurations are available in `.vscode/launch.json`.
+
+- "Debug TypeScript (tsx)" runs the app via `tsx` with source maps.
 - "Debug Compiled JavaScript" builds and launches the compiled `dist/main.js`.  
-Use F5 to start debugging and set breakpoints in your TypeScript code.
+  Use F5 to start debugging and set breakpoints in your TypeScript code.
 
 ## Memory Bank
 
