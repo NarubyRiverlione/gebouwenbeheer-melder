@@ -22,8 +22,14 @@ export class ReportsController {
   }
 
   @Post()
-  create(@Body() body: CreateReportDto): Report {
-    return reportRepo.create(body as NewReport)
+  create(@Body() body: { report?: CreateReportDto; processNow?: boolean }): Report {
+    const payload = body.report ?? body
+    const report = reportRepo.create(payload as NewReport)
+    if (body.processNow) {
+      // process immediately if requested
+      void reportRepo.processOne(report)
+    }
+    return report
   }
 
   @Post("process")
