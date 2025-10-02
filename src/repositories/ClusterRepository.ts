@@ -32,9 +32,11 @@ class ClusterRepository {
         (@main_issue, @severity, @category, @estimated_impact)`,
     )
     const info = stmt.run(data)
-    return db
+    const cluster = db
       .prepare("SELECT * FROM issue_cluster WHERE id = ?")
       .get(info.lastInsertRowid as number) as IssueCluster
+    // ensure linked_reports is present (may be empty)
+    return { ...cluster, linked_reports: [] }
   }
 
   findAll(): IssueCluster[] {
@@ -69,7 +71,7 @@ class ClusterRepository {
     return { ...cluster, linked_reports }
   }
 
-  updateEmbeddings(id:number, embeddings:number[]) {
+  updateEmbeddings(id: number, embeddings: number[]) {
     db.prepare("UPDATE issue_cluster SET embeddings = ? WHERE id = ?").run(embeddings, id)
   }
 }

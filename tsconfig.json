@@ -10,6 +10,12 @@
     "module": "nodenext",
     "target": "esnext",
     "types": ["node", "vitest/globals"],
+    // Enable experimental decorators and metadata required by NestJS
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     // Other Outputs
     "sourceMap": true,

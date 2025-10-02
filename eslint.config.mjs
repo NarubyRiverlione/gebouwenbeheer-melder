@@ -11,16 +11,16 @@ export default [
   { ignores: ["dist", "node_modules", "**/*.config.*", "jest.config.js"] },
 
   eslint.configs.recommended,
- 
+
   {
     files: ["src/*.ts"],
 
-      languageOptions: {
-        parser: tsparser,
-        sourceType: "module",
-        parserOptions: { project: ["./tsconfig.json"] },
-        globals: globals.node,
-      },
+    languageOptions: {
+      parser: tsparser,
+      sourceType: "module",
+      parserOptions: { project: ["./tsconfig.json"] },
+      globals: globals.node,
+    },
 
     plugins: {
       "@typescript-eslint": tseslint,
@@ -29,11 +29,12 @@ export default [
 
     rules: {
       ...tseslint.configs.recommended.rules,
-      ...tseslint.configs['flat/strict-type-checked'].rules,
-      ...tseslint.configs['flat/stylistic-type-checked'].rules,
+      ...tseslint.configs["flat/strict-type-checked"].rules,
+      ...tseslint.configs["flat/stylistic-type-checked"].rules,
       "@typescript-eslint/no-unused-vars": "warn",
       "no-console": "off",
       "prettier/prettier": "error",
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
   eslintConfigPrettier,
